@@ -1,0 +1,56 @@
+def read_pokedata(filename):
+    file = open(filename, "r")
+    pokedata = {}
+    for line in file:
+        line = line.strip().split(",")
+        pokemon = line[0]
+        type = line[1]
+        continent = line[2:]
+        record = {}
+        record["pokemon"] = pokemon
+        record["type"] = type
+        record["continent"] = continent
+        pokedata[pokemon] = record
+    return pokedata
+
+
+def find_types(pokedata):
+    types = []
+    for record in pokedata.values():
+        if record["type"] not in types:
+            types.append(record["type"])
+    return types
+
+
+def type_names(pokedata, type):
+    pokemons = []
+    for pokemon in pokedata:
+        if type == pokedata[pokemon]["type"]:
+            pokemons.append(pokemon)
+    return pokemons
+
+
+def count_locations(pokedata, pokemon_list):
+    continent = {}
+    for pokemon in pokemon_list:
+        n_continents = pokedata[pokemon]["continent"]
+        for cont in n_continents:
+            if cont not in continent:
+                continent[cont] = 1
+            else:
+                continent[cont] += 1
+
+    return continent
+
+
+input_file = "pokemonTypes.txt"
+pokedata = read_pokedata(input_file)
+types = find_types(pokedata)
+
+for type in types:
+    pokemons = type_names(pokedata, type)
+    print(type,"contains",len(pokemons),"pokemons.")
+    print("Below are the locaton where", type, "can be caught")
+    continent = count_locations(pokedata,pokemons)
+    print(continent)
+    print()
